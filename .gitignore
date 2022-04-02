@@ -9,4 +9,6 @@ format.py
 obj/
 .VSCodeCounter/
 .vscode/
+.idea
+CMakeLists.txt
 pke_out.txt
