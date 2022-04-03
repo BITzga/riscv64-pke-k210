@@ -62,7 +62,7 @@ void printk(const char *s, ...) {
 }
 
 void putstring(const char *s) {
-    while (*s) mcall_console_putchar(*s++);
+    cputs(s);
 }
 
 void vprintm(const char *s, va_list vl) {
