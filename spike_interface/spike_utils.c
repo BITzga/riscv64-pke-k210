@@ -82,17 +82,8 @@ void sprint(const char *s, ...) {
 
 //===============    Spike-assisted termination, panic and assert    ===============
 void poweroff(uint16_t code) {
-    assert(htif);
     sprint("Power off\r\n");
-    if (htif) {
-        htif_poweroff();
-    } else {
-        // we consider only one HART case in PKE experiments. May extend this later.
-        // send_ipi_many(0, IPI_HALT);
-        while (1) {
-            asm volatile("wfi\n");
-        }
-    }
+    sbi_shutdown();
 }
 
 void shutdown(int code) {
