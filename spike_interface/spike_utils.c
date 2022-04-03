@@ -11,6 +11,7 @@
 #include "spike_utils.h"
 #include "spike_file.h"
 #include "../k210_lib/stdio.h"
+#include "../k210_lib/sbi.h"
 
 //=============    encapsulating htif syscalls, invoking Spike functions    =============
 long frontend_syscall(long n, uint64 a0, uint64 a1, uint64 a2, uint64 a3, uint64 a4,
@@ -96,8 +97,7 @@ void poweroff(uint16_t code) {
 
 void shutdown(int code) {
     sprint("System is shutting down with exit code %d.\n", code);
-    frontend_syscall(HTIFSYS_exit, code, 0, 0, 0, 0, 0, 0);
-    while (1);
+    sbi_shutdown();
 }
 
 void do_panic(const char *s, ...) {
