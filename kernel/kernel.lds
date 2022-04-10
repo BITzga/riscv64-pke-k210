@@ -12,7 +12,7 @@ SECTIONS
   /*--------------------------------------------------------------------*/
 
   /* Begining of code and text segment, starts from DRAM_BASE to be effective before enabling paging */
-  . = 0x80000000;
+  . = 0x80200000;
   _ftext = .;
 
   /* text: Program code section */
