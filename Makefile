@@ -10,6 +10,11 @@ CC 				:= $(CROSS_PREFIX)gcc
 AR 				:= $(CROSS_PREFIX)ar
 RANLIB        	:= $(CROSS_PREFIX)ranlib
 
+COPY	:= cp
+V       := @
+PYTHON	:= python3
+TERM	:= miniterm
+
 SRC_DIR        	:= .
 OBJ_DIR 		:= obj
 SPROJS_INCLUDE 	:= -I.  
@@ -37,7 +42,9 @@ KERNEL_LDS  	:= kernel/kernel.lds
 KERNEL_CPPS 	:= \
 	kernel/*.c \
 	kernel/machine/*.c \
-	kernel/util/*.c
+	kernel/util/*.c \
+	k210_lib/*.c \
+	driver/*.c
 
 KERNEL_ASMS 	:= \
 	kernel/*.S \
@@ -50,6 +57,9 @@ KERNEL_OBJS  	:=  $(addprefix $(OBJ_DIR)/, $(patsubst %.c,%.o,$(KERNEL_CPPS)))
 KERNEL_OBJS  	+=  $(addprefix $(OBJ_DIR)/, $(patsubst %.S,%.o,$(KERNEL_ASMS)))
 
 KERNEL_TARGET = $(OBJ_DIR)/riscv-pke
+KERNEL_K210_TARGET = $(OBJ_DIR)/riscv-pke-k210
+BOOTLOADER	:= compile_tool/rustsbi-k210.bin
+PORT		:= /dev/ttyUSB0
 
 
 #---------------------	spike interface library -----------------------
@@ -102,6 +112,10 @@ $(KERNEL_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(SPIKE_INF_LIB) $(KERNEL_OBJS) $(KERNE
 	@$(COMPILE) $(KERNEL_OBJS) $(UTIL_LIB) $(SPIKE_INF_LIB) -o $@ -T $(KERNEL_LDS)
 	@echo "PKE core has been built into" \"$@\"
 
+$(KERNEL_K210_TARGET): $(KERNEL_TARGET) $(BOOTLOADER)
+	$(COPY) $(BOOTLOADER) $@
+	$(V)dd if=$(KERNEL_TARGET) of=$@ bs=128K seek=1
+
 $(USER_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(USER_OBJS) $(USER_LDS)
 	@echo "linking" $@	...	
 	@$(COMPILE) $(USER_OBJS) $(UTIL_LIB) -o $@ -T $(USER_LDS)
@@ -118,6 +132,10 @@ all: $(KERNEL_TARGET) $(USER_TARGET)
 run: $(KERNEL_TARGET) $(USER_TARGET)
 	@echo "********************HUST PKE********************"
 	spike $(KERNEL_TARGET) $(USER_TARGET)
+
+k210: $(KERNEL_K210_TARGET)
+	$(PYTHON) compile_tool/kflash.py -p $(PORT) -b 1500000 $(KERNEL_K210_TARGET)
+	$(TERM) --eol LF --dtr 0 --rts 0 --filter direct $(PORT) 115200
 
 # need openocd!
 gdb:$(KERNEL_TARGET) $(USER_TARGET)
