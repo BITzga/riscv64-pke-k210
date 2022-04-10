@@ -113,7 +113,7 @@ $(USER_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(USER_OBJS) $(USER_LDS)
 .DEFAULT_GOAL := $(all)
 
 all: $(KERNEL_TARGET) $(USER_TARGET)
-.PHONY:all
+.PHONY:all clean
 
 run: $(KERNEL_TARGET) $(USER_TARGET)
 	@echo "********************HUST PKE********************"
