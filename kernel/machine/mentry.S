@@ -9,15 +9,16 @@
 # [a1] = pointer to the DTS (i.e., Device Tree String), which is stored in the memory of
 # RISC-V guest computer.
 #
+.globl _mentry
+.section .text.prologue, "ax"
 
-  .globl _mentry
 _mentry:
     # [mscratch] = 0; mscratch points the stack bottom of machine mode computer
     csrw mscratch, x0
 
     # following codes allocate a 4096-byte stack for each HART, although we use only
     # ONE HART in this lab.
-    la sp, stack0		# stack0 is statically defined in kernel/machine/minit.c 
+    la sp, stack0		# stack0 is statically defined in kernel/machine/minit.c
     li a3, 4096			# 4096-byte stack
     csrr a4, mhartid	# [mhartid] = core ID
     addi a4, a4, 1

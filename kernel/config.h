@@ -4,7 +4,7 @@
 // we use only one HART (cpu) in fundamental experiments
 #define NCPU 1
 
-#define DRAM_BASE 0x80200000
+#define DRAM_BASE 0x80020000
 
 /* we use fixed physical (also logical) addresses for the stacks and trap frames as in
  Bare memory-mapping mode */
