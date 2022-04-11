@@ -6,18 +6,18 @@
 #include "../util/types.h"
 #include "sbi.h"
 
-uint64_t SBI_SET_TIMER = 0;
-uint64_t SBI_CONSOLE_PUTCHAR = 1;
-uint64_t SBI_CONSOLE_GETCHAR = 2;
-uint64_t SBI_CLEAR_IPI = 3;
-uint64_t SBI_SEND_IPI = 4;
-uint64_t SBI_REMOTE_FENCE_I = 5;
-uint64_t SBI_REMOTE_SFENCE_VMA = 6;
-uint64_t SBI_REMOTE_SFENCE_VMA_ASID = 7;
-uint64_t SBI_SHUTDOWN = 8;
+uint64 SBI_SET_TIMER = 0;
+uint64 SBI_CONSOLE_PUTCHAR = 1;
+uint64 SBI_CONSOLE_GETCHAR = 2;
+uint64 SBI_CLEAR_IPI = 3;
+uint64 SBI_SEND_IPI = 4;
+uint64 SBI_REMOTE_FENCE_I = 5;
+uint64 SBI_REMOTE_SFENCE_VMA = 6;
+uint64 SBI_REMOTE_SFENCE_VMA_ASID = 7;
+uint64 SBI_SHUTDOWN = 8;
 
-uint64_t sbi_call(uint64_t sbi_type, uint64_t arg0, uint64_t arg1, uint64_t arg2) {
-    uint64_t ret_val;
+uint64 sbi_call(uint64 sbi_type, uint64 arg0, uint64 arg1, uint64 arg2) {
+    uint64 ret_val;
     __asm__ volatile (
     "mv x17, %[sbi_type]\n"
     "mv x10, %[arg0]\n"

@@ -84,11 +84,15 @@ void sprint(const char *s, ...) {
 void poweroff(uint16_t code) {
     sprint("Power off\r\n");
     sbi_shutdown();
+    while (1) {
+        asm volatile("wfi\n");
+    }
 }
 
 void shutdown(int code) {
     sprint("System is shutting down with exit code %d.\n", code);
     sbi_shutdown();
+    while (1);
 }
 
 void do_panic(const char *s, ...) {
