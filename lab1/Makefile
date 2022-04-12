@@ -61,7 +61,7 @@ KERNEL_OBJS  	+=  $(addprefix $(OBJ_DIR)/, $(patsubst %.S,%.o,$(KERNEL_ASMS)))
 KERNEL_TARGET = $(OBJ_DIR)/riscv-pke
 KERNEL_K210_TARGET = $(OBJ_DIR)/riscv-pke-k210
 KERNEL_TEMP_TARGET = $(OBJ_DIR)/KERNEL_TEMP_TARGET
-BOOTLOADER	:= compile_tool/rustsbi-k210.bin
+BOOTLOADER	:= ../compile_tool/rustsbi-k210.bin
 PORT		:= /dev/ttyUSB0
 
 
@@ -140,7 +140,7 @@ run: $(KERNEL_TARGET) $(USER_TARGET)
 	spike $(KERNEL_TARGET) $(USER_TARGET)
 
 k210: $(KERNEL_K210_TARGET)
-	$(PYTHON) compile_tool/kflash.py -p $(PORT) -b 1500000 $(KERNEL_K210_TARGET)
+	$(PYTHON) ../compile_tool/kflash.py -p $(PORT) -b 1500000 $(KERNEL_K210_TARGET)
 	$(TERM) --eol LF --dtr 0 --rts 0 --filter direct $(PORT) 115200
 
 # need openocd!
