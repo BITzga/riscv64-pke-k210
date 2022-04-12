@@ -1,7 +1,1 @@
-compile_tool/kflash.py -linguist-vendored
-compile_tool/** -linguist-vendored
-*.c linguist-language=C
-*.h linguist-language=C
-*.S linguist-language=Assembly
-*.py linguist-language=C
-*/Makefile linguist-language=Makefile
+compile_tool/kflash.py -linguist-detectable
