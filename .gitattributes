@@ -1,2 +1,6 @@
 *.py -linguist-vendored=true
 compile_tool/* -linguist-vendored
+*.c linguist-language=C
+*.h linguist-language=C
+*.S linguist-language=Assembly
+*/Makefile linguist-language=Makefile
