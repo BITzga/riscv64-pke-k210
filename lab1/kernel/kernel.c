@@ -24,6 +24,16 @@ void load_user_program(process *proc) {
   load_bincode_from_host_elf(proc);
 }
 
+void load_user_program_on_k210(process *proc) {
+    proc->trapframe = (trapframe *)USER_TRAP_FRAME;
+    memset(proc->trapframe, 0, sizeof(trapframe));
+    proc->kstack = USER_KSTACK;
+    proc->trapframe->regs.sp = USER_STACK;
+    proc->trapframe->epc = USER_PROGRAM_ENTRY;
+
+    sprint("Application program entry point (virtual address): 0x%lx\n", proc->trapframe->epc);
+}
+
 //
 // s_start: S-mode entry point of PKE OS kernel.
 //
@@ -34,7 +44,7 @@ int s_start(void) {
   write_csr(satp, 0);
 
   // the application code (elf) is first loaded into memory, and then put into execution
-  load_user_program(&user_app);
+  load_user_program_on_k210(&user_app);
 
   sprint("Switch to user mode...\n");
   switch_to(&user_app);
