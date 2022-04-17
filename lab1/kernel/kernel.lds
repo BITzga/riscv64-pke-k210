@@ -2,7 +2,7 @@
 
 OUTPUT_ARCH(riscv)
 
-ENTRY(kern_entry)
+ENTRY(_mentry)
 
 BASE_ADDRESS = 0x80020000;
 
