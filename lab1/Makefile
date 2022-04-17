@@ -46,12 +46,14 @@ KERNEL_CPPS 	:= \
 	kernel/machine/*.c \
 	kernel/util/*.c \
 	k210_lib/*.c \
-	driver/*.c
+	driver/*.c \
+	user/*.c
 
 KERNEL_ASMS 	:= \
 	kernel/*.S \
 	kernel/machine/*.S \
-	kernel/util/*.S
+	kernel/util/*.S \
+	user/*.S
 
 KERNEL_CPPS  	:= $(wildcard $(KERNEL_CPPS))
 KERNEL_ASMS  	:= $(wildcard $(KERNEL_ASMS))
