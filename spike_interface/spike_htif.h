@@ -92,13 +92,16 @@
 #define AT_FDCWD -100
 
 extern uint64 htif;
+
 void query_htif(uint64 dtb);
 
 // Spike HTIF functionalities
 void htif_syscall(uint64);
 
 void htif_console_putchar(uint8_t);
+
 int htif_console_getchar();
+
 void htif_poweroff() __attribute__((noreturn));
 
 #endif

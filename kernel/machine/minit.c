@@ -31,13 +31,13 @@ extern uint64 g_mem_size;
 // platform simulated using Spike.
 //
 void init_dtb(uint64 dtb) {
-  // defined in kernel/machine/htif.c, enabling Host-Target InterFace (HTIF)
-  query_htif(dtb);
-  if (htif) sprint("HTIF is available!\r\n");
+    // defined in kernel/machine/htif.c, enabling Host-Target InterFace (HTIF)
+    query_htif(dtb);
+    if (htif) sprint("HTIF is available!\r\n");
 
-  // defined in kernel/machine/fdt.c, obtain information about emulated memory
-  query_mem(dtb);
-  sprint("(Emulated) memory size: %ld MB\n", g_mem_size >> 20);
+    // defined in kernel/machine/fdt.c, obtain information about emulated memory
+    query_mem(dtb);
+    sprint("(Emulated) memory size: %ld MB\n", g_mem_size >> 20);
 }
 
 //
@@ -45,43 +45,43 @@ void init_dtb(uint64 dtb) {
 // after delegation, syscalls will handled by the PKE OS kernel running in S-mode.
 //
 static void delegate_traps() {
-  if (!supports_extension('S')) {
-    // confirm that our processor supports supervisor mode. abort if not.
-    sprint("S mode is not supported.\n");
-    return;
-  }
+    if (!supports_extension('S')) {
+        // confirm that our processor supports supervisor mode. abort if not.
+        sprint("S mode is not supported.\n");
+        return;
+    }
 
-  uintptr_t interrupts = MIP_SSIP | MIP_STIP | MIP_SEIP;
-  uintptr_t exceptions = (1U << CAUSE_MISALIGNED_FETCH) | (1U << CAUSE_FETCH_PAGE_FAULT) |
-                         (1U << CAUSE_BREAKPOINT) | (1U << CAUSE_LOAD_PAGE_FAULT) |
-                         (1U << CAUSE_STORE_PAGE_FAULT) | (1U << CAUSE_USER_ECALL);
+    uintptr_t interrupts = MIP_SSIP | MIP_STIP | MIP_SEIP;
+    uintptr_t exceptions = (1U << CAUSE_MISALIGNED_FETCH) | (1U << CAUSE_FETCH_PAGE_FAULT) |
+                           (1U << CAUSE_BREAKPOINT) | (1U << CAUSE_LOAD_PAGE_FAULT) |
+                           (1U << CAUSE_STORE_PAGE_FAULT) | (1U << CAUSE_USER_ECALL);
 
-  write_csr(mideleg, interrupts);
-  write_csr(medeleg, exceptions);
-  assert(read_csr(mideleg) == interrupts);
-  assert(read_csr(medeleg) == exceptions);
+    write_csr(mideleg, interrupts);
+    write_csr(medeleg, exceptions);
+    assert(read_csr(mideleg) == interrupts);
+    assert(read_csr(medeleg) == exceptions);
 }
 
 //
 // m_start: machine mode C entry point.
 //
 void m_start(uintptr_t hartid, uintptr_t dtb) {
-  // init the spike file interface (stdin,stdout,stderr)
-  spike_file_init();
-  sprint("In m_start, hartid:%d\n", hartid);
+    // init the spike file interface (stdin,stdout,stderr)
+    spike_file_init();
+    sprint("In m_start, hartid:%d\n", hartid);
 
-  // init HTIF (Host-Target InterFace) and memory by using the Device Table Blob (DTB)
-  init_dtb(dtb);
+    // init HTIF (Host-Target InterFace) and memory by using the Device Table Blob (DTB)
+    init_dtb(dtb);
 
-  // set previous privilege mode to S (Supervisor), and will enter S mode after 'mret'
-  write_csr(mstatus, ((read_csr(mstatus) & ~MSTATUS_MPP_MASK) | MSTATUS_MPP_S));
+    // set previous privilege mode to S (Supervisor), and will enter S mode after 'mret'
+    write_csr(mstatus, ((read_csr(mstatus) & ~MSTATUS_MPP_MASK) | MSTATUS_MPP_S));
 
-  // set M Exception Program Counter to sstart, for mret (requires gcc -mcmodel=medany)
-  write_csr(mepc, (uint64)s_start);
+    // set M Exception Program Counter to sstart, for mret (requires gcc -mcmodel=medany)
+    write_csr(mepc, (uint64) s_start);
 
-  // delegate all interrupts and exceptions to supervisor mode.
-  delegate_traps();
+    // delegate all interrupts and exceptions to supervisor mode.
+    delegate_traps();
 
-  // switch to supervisor mode and jump to s_start(), i.e., set pc to mepc
-  asm volatile("mret");
+    // switch to supervisor mode and jump to s_start(), i.e., set pc to mepc
+    asm volatile("mret");
 }

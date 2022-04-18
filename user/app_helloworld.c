@@ -11,7 +11,7 @@
 #include "user_lib.h"
 
 int main(void) {
-  printu("Hello world!\n");
+    printu("Hello world!\n");
 
-  exit(0);
+    exit(0);
 }

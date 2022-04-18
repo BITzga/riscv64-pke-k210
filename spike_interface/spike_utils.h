@@ -10,8 +10,11 @@ long frontend_syscall(long n, uint64 a0, uint64 a1, uint64 a2, uint64 a3, uint64
                       uint64 a6);
 
 void poweroff(uint16 code) __attribute((noreturn));
-void sprint(const char* s, ...);
-void putstring(const char* s);
+
+void sprint(const char *s, ...);
+
+void putstring(const char *s);
+
 void shutdown(int) __attribute__((noreturn));
 
 #define assert(x)                              \
@@ -24,8 +27,9 @@ void shutdown(int) __attribute__((noreturn));
     poweroff(-1);                                                  \
   })
 
-void do_panic(const char* s, ...) __attribute__((noreturn));
-void kassert_fail(const char* s) __attribute__((noreturn));
+void do_panic(const char *s, ...) __attribute__((noreturn));
+
+void kassert_fail(const char *s) __attribute__((noreturn));
 
 //void shutdown(int code);
 
