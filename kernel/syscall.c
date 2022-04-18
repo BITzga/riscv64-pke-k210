@@ -5,13 +5,13 @@
 #include <stdint.h>
 #include <errno.h>
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "syscall.h"
 #include "string.h"
 #include "process.h"
-#include "util/functions.h"
+#include "../util/functions.h"
 
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 //
 // implement the SYS_user_print syscall

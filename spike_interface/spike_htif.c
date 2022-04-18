@@ -10,10 +10,10 @@
  * codes are borrowed from riscv-pk (https://github.com/riscv/riscv-pk)
  */
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "spike_htif.h"
 #include "atomic.h"
-#include "spike_interface/spike_utils.h"
+#include "spike_utils.h"
 #include "dts_parse.h"
 #include "string.h"
 

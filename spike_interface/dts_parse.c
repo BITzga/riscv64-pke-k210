@@ -5,7 +5,7 @@
  */
 
 #include "dts_parse.h"
-#include "spike_interface/spike_utils.h"
+#include "spike_utils.h"
 #include "string.h"
 
 static inline uint32 bswap(uint32 x) {

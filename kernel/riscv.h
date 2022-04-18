@@ -1,7 +1,7 @@
 #ifndef _RISCV_H_
 #define _RISCV_H_
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "config.h"
 
 // fields of mstatus, the Machine mode Status register

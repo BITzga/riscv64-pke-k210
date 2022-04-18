@@ -7,7 +7,7 @@
 #include "elf.h"
 #include "process.h"
 
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 process user_app;
 

@@ -13,7 +13,7 @@
 #include "elf.h"
 #include "string.h"
 
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 //Two functions defined in kernel/usertrap.S
 extern char smode_trap_vector[];

@@ -1,7 +1,7 @@
 #ifndef _DT_PARSE_H_
 #define _DT_PARSE_H_
 
-#include "util/types.h"
+#include "../util/types.h"
 
 #define FDT_MAGIC 0xd00dfeed
 #define FDT_VERSION 17

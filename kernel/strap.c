@@ -7,7 +7,7 @@
 #include "strap.h"
 #include "syscall.h"
 
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 //
 // handling the syscalls. will call do_syscall() defined in kernel/syscall.c

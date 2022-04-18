@@ -6,7 +6,7 @@
 #include "elf.h"
 #include "string.h"
 #include "riscv.h"
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 typedef struct elf_info_t {
   spike_file_t *f;

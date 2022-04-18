@@ -5,7 +5,7 @@
  * codes are borrowed from riscv-pk (https://github.com/riscv/riscv-pk)
  */
 #include "dts_parse.h"
-#include "spike_interface/spike_utils.h"
+#include "spike_utils.h"
 #include "string.h"
 
 uint64 g_mem_size;

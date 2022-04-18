@@ -10,8 +10,8 @@
 #include "spike_htif.h"
 #include "atomic.h"
 #include "string.h"
-#include "util/functions.h"
-#include "spike_interface/spike_utils.h"
+#include "../util/functions.h"
+#include "spike_utils.h"
 //#include "../kernel/config.h"
 
 #define MAX_FILES 128

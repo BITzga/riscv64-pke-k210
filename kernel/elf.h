@@ -1,7 +1,7 @@
 #ifndef _ELF_H_
 #define _ELF_H_
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "process.h"
 
 #define MAX_CMDLINE_ARGS 64

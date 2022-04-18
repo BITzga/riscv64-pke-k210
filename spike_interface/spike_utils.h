@@ -1,7 +1,7 @@
 #ifndef _SPIKE_UTILS_H_
 #define _SPIKE_UTILS_H_
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "spike_file.h"
 #include "spike_memory.h"
 #include "spike_htif.h"

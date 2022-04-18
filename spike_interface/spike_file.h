@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "util/types.h"
+#include "../util/types.h"
 
 typedef struct file {
   int kfd;  // file descriptor of the host file

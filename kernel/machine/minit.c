@@ -2,10 +2,10 @@
  * Machine-mode startup codes
  */
 
-#include "util/types.h"
-#include "kernel/riscv.h"
-#include "kernel/config.h"
-#include "spike_interface/spike_utils.h"
+#include "../../util/types.h"
+#include "../riscv.h"
+#include "../config.h"
+#include "../../spike_interface/spike_utils.h"
 
 //
 // global variables are placed in the .data section.

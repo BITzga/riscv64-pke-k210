@@ -2,7 +2,7 @@
 #define _SPIKE_HTIF_H_
 
 #include <stdint.h>
-#include "util/types.h"
+#include "../util/types.h"
 
 #if __riscv_xlen == 64
 #define TOHOST_CMD(dev, cmd, payload) \
