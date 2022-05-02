@@ -55,6 +55,7 @@
 // irqs (interrupts)
 #define CAUSE_MTIMER 0x8000000000000007
 #define CAUSE_MTIMER_S_TRAP 0x8000000000000001
+#define CAUSE_STIMER_S_TRAP 0x8000000000000005
 
 //Supervisor interrupt-pending register
 #define SIP_SSIP (1L << 1)
