@@ -30,7 +30,7 @@ static inline uint64 get_cycles(void) {
 
 
 // Hardcode timebase
-static uint64 timebase = 100000;
+static uint64 timebase = 10000000;
 
 
 /* *

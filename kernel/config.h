@@ -20,6 +20,6 @@
 // the trap frame used to assemble the user "process"
 #define USER_TRAP_FRAME 0x81300000
 
-#define USER_PROGRAM_ENTRY 0x80020788
+#define USER_PROGRAM_ENTRY 0x8002091a
 
 #endif

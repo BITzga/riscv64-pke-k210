@@ -28,7 +28,7 @@ static void handle_syscall(trapframe *tf) {
 }
 
 
-void handle_mtimer_trap() {
+void handle_stimer_trap() {
     sprint("Ticks %d\n", ++g_ticks);
     clock_set_next_event();
     // TODO (lab1_3): increase g_ticks to record this "tick", and then clear the "SIP"
@@ -56,7 +56,7 @@ void smode_trap_handler(void) {
     if (cause == CAUSE_USER_ECALL) {
         handle_syscall(current->trapframe);
     } else if (cause == CAUSE_STIMER_S_TRAP) {
-        handle_mtimer_trap();
+        handle_stimer_trap();
     } else {
         sprint("smode_trap_handler(): unexpected scause %p\n", read_csr(scause));
         sprint("            sepc=%p stval=%p\n", read_csr(sepc), read_csr(stval));
