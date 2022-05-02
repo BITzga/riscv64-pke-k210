@@ -8,9 +8,9 @@
 #include "../kernel/riscv.h"
 #include "../k210_lib/sbi.h"
 
-static inline uint64
+volatile uint64 g_ticks;
 
-get_cycles(void) {
+static inline uint64 get_cycles(void) {
 #if __riscv_xlen == 64
     uint64 n;
     __asm__ __volatile__("rdtime %0" : "=r"(n));
