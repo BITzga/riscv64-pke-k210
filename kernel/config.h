@@ -1,6 +1,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include "memlayout.h"
+
 // we use only one HART (cpu) in fundamental experiments
 #define NCPU 1
 
