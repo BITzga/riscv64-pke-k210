@@ -8,6 +8,7 @@
 #include "syscall.h"
 
 #include "../spike_interface/spike_utils.h"
+#include "../driver/clock.h"
 
 //
 // handling the syscalls. will call do_syscall() defined in kernel/syscall.c
@@ -26,6 +27,16 @@ static void handle_syscall(trapframe *tf) {
                              tf->regs.a7);
 }
 
+
+void handle_stimer_trap() {
+    sprint("Ticks %d\n", ++g_ticks);
+    clock_set_next_event();
+    // TODO (lab1_3): increase g_ticks to record this "tick", and then clear the "SIP"
+    // field in sip register.
+    // hint: use write_csr to disable the SIP_SSIP bit in sip.
+    //panic( "lab1_3: increase g_ticks by one, and clear SIP field in sip register.\n" );
+}
+
 //
 // kernel/smode_trap.S will pass control to smode_trap_handler, when a trap happens
 // in S-mode.
@@ -40,8 +51,12 @@ void smode_trap_handler(void) {
     current->trapframe->epc = read_csr(sepc);
 
     // if the cause of trap is syscall from user application
-    if (read_csr(scause) == CAUSE_USER_ECALL) {
+    uint64 cause = read_csr(scause);
+
+    if (cause == CAUSE_USER_ECALL) {
         handle_syscall(current->trapframe);
+    } else if (cause == CAUSE_STIMER_S_TRAP) {
+        handle_stimer_trap();
     } else {
         sprint("smode_trap_handler(): unexpected scause %p\n", read_csr(scause));
         sprint("            sepc=%p stval=%p\n", read_csr(sepc), read_csr(stval));

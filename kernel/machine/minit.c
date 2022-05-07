@@ -16,11 +16,15 @@ __attribute__((aligned(16))) char stack0[4096 * NCPU];
 
 // sstart is the supervisor state entry point
 extern void s_start();  // defined in kernel/kernel.c
+// M-mode trap entry point
+extern void mtrapvec();
 
 // htif is defined in kernel/machine/spike_htif.c, marks the availability of HTIF
 extern uint64 htif;
 // g_mem_size is defined in kernel/machine/spike_memory.c, size of the emulated memory
 extern uint64 g_mem_size;
+// g_itrframe is used for saving registers when interrupt hapens in M mode
+struct riscv_regs g_itrframe;
 
 //
 // get the information of HTIF (calling interface) and the emulated memory by
@@ -63,6 +67,17 @@ static void delegate_traps() {
 }
 
 //
+// enabling timer interrupt (irq) in Machine mode
+//
+void timerinit(uintptr_t hartid) {
+  // fire timer irq after TIMER_INTERVAL from now.
+  *(uint64*)CLINT_MTIMECMP(hartid) = *(uint64*)CLINT_MTIME + TIMER_INTERVAL;
+
+  // enable machine-mode timer irq in MIE (Machine Interrupt Enable) csr.
+  write_csr(mie, read_csr(mie) | MIE_MTIE);
+}
+
+//
 // m_start: machine mode C entry point.
 //
 void m_start(uintptr_t hartid, uintptr_t dtb) {
@@ -73,14 +88,26 @@ void m_start(uintptr_t hartid, uintptr_t dtb) {
     // init HTIF (Host-Target InterFace) and memory by using the Device Table Blob (DTB)
     init_dtb(dtb);
 
+    // save the address of frame for interrupt in M mode to csr "mscratch".
+    write_csr(mscratch, &g_itrframe);
+
     // set previous privilege mode to S (Supervisor), and will enter S mode after 'mret'
     write_csr(mstatus, ((read_csr(mstatus) & ~MSTATUS_MPP_MASK) | MSTATUS_MPP_S));
 
     // set M Exception Program Counter to sstart, for mret (requires gcc -mcmodel=medany)
     write_csr(mepc, (uint64) s_start);
 
+    // setup trap handling vector
+    write_csr(mtvec, (uint64)mtrapvec);
+
+    // enable machine-mode interrupts.
+    write_csr(mstatus, read_csr(mstatus) | MSTATUS_MIE);
+
     // delegate all interrupts and exceptions to supervisor mode.
     delegate_traps();
+    write_csr(sie, read_csr(sie) | SIE_SEIE | SIE_STIE | SIE_SSIE);
+
+    timerinit(hartid);
 
     // switch to supervisor mode and jump to s_start(), i.e., set pc to mepc
     asm volatile("mret");

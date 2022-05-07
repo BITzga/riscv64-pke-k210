@@ -48,7 +48,7 @@ void switch_to(process *proc) {
 
     // set S Exception Program Counter to the saved user pc.
     write_csr(sepc, proc->trapframe->epc);
-    sprint("sepc %lx", read_csr(sepc));
+    //sprint("sepc %lx", read_csr(sepc));
 
     // switch to user mode with sret.
     return_to_user(proc->trapframe);

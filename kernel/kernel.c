@@ -8,6 +8,7 @@
 #include "process.h"
 
 #include "../spike_interface/spike_utils.h"
+#include "../driver/clock.h"
 
 process user_app;
 
@@ -42,6 +43,8 @@ int s_start(void) {
     // Note: we use direct (i.e., Bare mode) for memory mapping in lab1.
     // which means: Virtual Address = Physical Address
     write_csr(satp, 0);
+
+    clock_init();
 
     // the application code (elf) is first loaded into memory, and then put into execution
     load_user_program_on_k210(&user_app);
