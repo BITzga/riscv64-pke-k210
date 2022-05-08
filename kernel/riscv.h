@@ -1,7 +1,7 @@
 #ifndef _RISCV_H_
 #define _RISCV_H_
 
-#include "util/types.h"
+#include "../util/types.h"
 #include "config.h"
 
 // fields of mstatus, the Machine mode Status register
@@ -55,6 +55,7 @@
 // irqs (interrupts)
 #define CAUSE_MTIMER 0x8000000000000007
 #define CAUSE_MTIMER_S_TRAP 0x8000000000000001
+#define CAUSE_STIMER_S_TRAP 0x8000000000000005
 
 //Supervisor interrupt-pending register
 #define SIP_SSIP (1L << 1)
@@ -91,7 +92,7 @@
   })
 
 static inline int supports_extension(char ext) {
-  return read_const_csr(misa) & (1 << (ext - 'A'));
+    return read_const_csr(misa) & (1 << (ext - 'A'));
 }
 
 #define read_csr(reg)                             \
@@ -125,23 +126,23 @@ static inline void intr_off(void) { write_csr(sstatus, read_csr(sstatus) & ~SSTA
 
 // are device interrupts enabled?
 static inline int is_intr_enable(void) {
-  //  uint64 x = r_sstatus();
-  uint64 x = read_csr(sstatus);
-  return (x & SSTATUS_SIE) != 0;
+    //  uint64 x = r_sstatus();
+    uint64 x = read_csr(sstatus);
+    return (x & SSTATUS_SIE) != 0;
 }
 
 // read sp, the stack pointer
 static inline uint64 read_sp(void) {
-  uint64 x;
-  asm volatile("mv %0, sp" : "=r"(x));
-  return x;
+    uint64 x;
+    asm volatile("mv %0, sp" : "=r"(x));
+    return x;
 }
 
 // read tp, the thread pointer, holding hartid (core number), the index into cpus[].
 static inline uint64 read_tp(void) {
-  uint64 x;
-  asm volatile("mv %0, tp" : "=r"(x));
-  return x;
+    uint64 x;
+    asm volatile("mv %0, tp" : "=r"(x));
+    return x;
 }
 
 // write tp, the thread pointer, holding hartid (core number), the index into cpus[].
@@ -184,37 +185,37 @@ typedef uint64 pte_t;
 typedef uint64 *pagetable_t;  // 512 PTEs
 
 typedef struct riscv_regs {
-  /*  0  */ uint64 ra;
-  /*  8  */ uint64 sp;
-  /*  16 */ uint64 gp;
-  /*  24 */ uint64 tp;
-  /*  32 */ uint64 t0;
-  /*  40 */ uint64 t1;
-  /*  48 */ uint64 t2;
-  /*  56 */ uint64 s0;
-  /*  64 */ uint64 s1;
-  /*  72 */ uint64 a0;
-  /*  80 */ uint64 a1;
-  /*  88 */ uint64 a2;
-  /*  96 */ uint64 a3;
-  /* 104 */ uint64 a4;
-  /* 112 */ uint64 a5;
-  /* 120 */ uint64 a6;
-  /* 128 */ uint64 a7;
-  /* 136 */ uint64 s2;
-  /* 144 */ uint64 s3;
-  /* 152 */ uint64 s4;
-  /* 160 */ uint64 s5;
-  /* 168 */ uint64 s6;
-  /* 176 */ uint64 s7;
-  /* 184 */ uint64 s8;
-  /* 192 */ uint64 s9;
-  /* 196 */ uint64 s10;
-  /* 208 */ uint64 s11;
-  /* 216 */ uint64 t3;
-  /* 224 */ uint64 t4;
-  /* 232 */ uint64 t5;
-  /* 240 */ uint64 t6;
-}riscv_regs;
+    /*  0  */ uint64 ra;
+    /*  8  */ uint64 sp;
+    /*  16 */ uint64 gp;
+    /*  24 */ uint64 tp;
+    /*  32 */ uint64 t0;
+    /*  40 */ uint64 t1;
+    /*  48 */ uint64 t2;
+    /*  56 */ uint64 s0;
+    /*  64 */ uint64 s1;
+    /*  72 */ uint64 a0;
+    /*  80 */ uint64 a1;
+    /*  88 */ uint64 a2;
+    /*  96 */ uint64 a3;
+    /* 104 */ uint64 a4;
+    /* 112 */ uint64 a5;
+    /* 120 */ uint64 a6;
+    /* 128 */ uint64 a7;
+    /* 136 */ uint64 s2;
+    /* 144 */ uint64 s3;
+    /* 152 */ uint64 s4;
+    /* 160 */ uint64 s5;
+    /* 168 */ uint64 s6;
+    /* 176 */ uint64 s7;
+    /* 184 */ uint64 s8;
+    /* 192 */ uint64 s9;
+    /* 196 */ uint64 s10;
+    /* 208 */ uint64 s11;
+    /* 216 */ uint64 t3;
+    /* 224 */ uint64 t4;
+    /* 232 */ uint64 t5;
+    /* 240 */ uint64 t6;
+} riscv_regs;
 
 #endif

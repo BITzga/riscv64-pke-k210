@@ -4,8 +4,8 @@
 
 #include <stdarg.h>
 
-#include "util/types.h"
+#include "types.h"
 
-int vsnprintf(char* out, size_t n, const char* s, va_list vl);
+int vsnprintf(char *out, size_t n, const char *s, va_list vl);
 
 #endif

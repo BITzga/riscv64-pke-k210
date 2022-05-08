@@ -9,6 +9,13 @@ CROSS_PREFIX 	:= riscv64-unknown-elf-
 CC 				:= $(CROSS_PREFIX)gcc
 AR 				:= $(CROSS_PREFIX)ar
 RANLIB        	:= $(CROSS_PREFIX)ranlib
+OBJCOPY 		:= $(CROSS_PREFIX)objcopy
+
+
+COPY	:= cp
+V       := @
+PYTHON	:= python3
+TERM	:= miniterm
 
 SRC_DIR        	:= .
 OBJ_DIR 		:= obj
@@ -37,12 +44,16 @@ KERNEL_LDS  	:= kernel/kernel.lds
 KERNEL_CPPS 	:= \
 	kernel/*.c \
 	kernel/machine/*.c \
-	kernel/util/*.c
+	kernel/util/*.c \
+	k210_lib/*.c \
+	driver/*.c \
+	user/*.c
 
 KERNEL_ASMS 	:= \
 	kernel/*.S \
 	kernel/machine/*.S \
-	kernel/util/*.S
+	kernel/util/*.S \
+	user/*.S
 
 KERNEL_CPPS  	:= $(wildcard $(KERNEL_CPPS))
 KERNEL_ASMS  	:= $(wildcard $(KERNEL_ASMS))
@@ -50,6 +61,10 @@ KERNEL_OBJS  	:=  $(addprefix $(OBJ_DIR)/, $(patsubst %.c,%.o,$(KERNEL_CPPS)))
 KERNEL_OBJS  	+=  $(addprefix $(OBJ_DIR)/, $(patsubst %.S,%.o,$(KERNEL_ASMS)))
 
 KERNEL_TARGET = $(OBJ_DIR)/riscv-pke
+KERNEL_K210_TARGET = $(OBJ_DIR)/riscv-pke-k210
+KERNEL_TEMP_TARGET = $(OBJ_DIR)/KERNEL_TEMP_TARGET
+BOOTLOADER	:= compile_tool/rustsbi-k210.bin
+PORT		:= /dev/ttyUSB0
 
 
 #---------------------	spike interface library -----------------------
@@ -102,8 +117,15 @@ $(KERNEL_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(SPIKE_INF_LIB) $(KERNEL_OBJS) $(KERNE
 	@$(COMPILE) $(KERNEL_OBJS) $(UTIL_LIB) $(SPIKE_INF_LIB) -o $@ -T $(KERNEL_LDS)
 	@echo "PKE core has been built into" \"$@\"
 
+$(KERNEL_TEMP_TARGET): $(KERNEL_TARGET)
+	$(OBJCOPY) $(KERNEL_TARGET) --strip-all -O binary $@
+
+$(KERNEL_K210_TARGET): $(KERNEL_TEMP_TARGET) $(BOOTLOADER)
+	$(COPY) $(BOOTLOADER) $@
+	$(V)dd if=$(KERNEL_TEMP_TARGET) of=$@ bs=128K seek=1
+
 $(USER_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(USER_OBJS)
-	@echo "linking" $@	...	
+	@echo "linking" $@	...
 	@$(COMPILE) --entry=main $(USER_OBJS) $(UTIL_LIB) -o $@
 	@echo "User app has been built into" \"$@\"
 
@@ -113,11 +135,15 @@ $(USER_TARGET): $(OBJ_DIR) $(UTIL_LIB) $(USER_OBJS)
 .DEFAULT_GOAL := $(all)
 
 all: $(KERNEL_TARGET) $(USER_TARGET)
-.PHONY:all
+.PHONY:all clean
 
 run: $(KERNEL_TARGET) $(USER_TARGET)
 	@echo "********************HUST PKE********************"
 	spike $(KERNEL_TARGET) $(USER_TARGET)
+
+k210: $(KERNEL_K210_TARGET)
+	$(PYTHON) compile_tool/kflash.py -p $(PORT) -b 1500000 $(KERNEL_K210_TARGET)
+	$(TERM) --eol LF --dtr 0 --rts 0 --filter direct $(PORT) 115200
 
 # need openocd!
 gdb:$(KERNEL_TARGET) $(USER_TARGET)
