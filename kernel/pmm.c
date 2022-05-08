@@ -73,7 +73,7 @@ void pmm_init() {
 
     // recompute g_mem_size to limit the physical memory space that PKE kernel
     // needs to manage
-    g_mem_size = MIN(PKE_MAX_ALLOWABLE_RAM, g_mem_size);
+    g_mem_size = PKE_MAX_ALLOWABLE_RAM;
     if (g_mem_size < pke_kernel_size)
         panic("Error when recomputing physical memory size (g_mem_size).\n");
 
