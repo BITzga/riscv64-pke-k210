@@ -11,6 +11,6 @@
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-char* safestrcpy(char*, const char*, int);
+char *safestrcpy(char *, const char *, int);
 
 #endif

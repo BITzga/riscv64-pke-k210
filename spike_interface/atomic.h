@@ -11,10 +11,10 @@
 #define enable_irqrestore(flags) ((void)(flags))
 
 typedef struct {
-  int lock;
-  // For debugging:
-  char* name;       // Name of lock.
-  struct cpu* cpu;  // The cpu holding the lock.
+    int lock;
+    // For debugging:
+    char *name;       // Name of lock.
+    struct cpu *cpu;  // The cpu holding the lock.
 } spinlock_t;
 
 #define SPINLOCK_INIT \
@@ -44,33 +44,32 @@ typedef struct {
     res;                                                    \
   })
 
-static inline int spinlock_trylock(spinlock_t* lock) {
-  int res = atomic_swap(&lock->lock, -1);
-  mb();
-  return res;
+static inline int spinlock_trylock(spinlock_t *lock) {
+    int res = atomic_swap(&lock->lock, -1);
+    mb();
+    return res;
 }
 
-static inline void spinlock_lock(spinlock_t* lock) {
-  do {
-    while (atomic_read(&lock->lock))
-      ;
-  } while (spinlock_trylock(lock));
+static inline void spinlock_lock(spinlock_t *lock) {
+    do {
+        while (atomic_read(&lock->lock));
+    } while (spinlock_trylock(lock));
 }
 
-static inline void spinlock_unlock(spinlock_t* lock) {
-  mb();
-  atomic_set(&lock->lock, 0);
+static inline void spinlock_unlock(spinlock_t *lock) {
+    mb();
+    atomic_set(&lock->lock, 0);
 }
 
-static inline long spinlock_lock_irqsave(spinlock_t* lock) {
-  long flags = disable_irqsave();
-  spinlock_lock(lock);
-  return flags;
+static inline long spinlock_lock_irqsave(spinlock_t *lock) {
+    long flags = disable_irqsave();
+    spinlock_lock(lock);
+    return flags;
 }
 
-static inline void spinlock_unlock_irqrestore(spinlock_t* lock, long flags) {
-  spinlock_unlock(lock);
-  enable_irqrestore(flags);
+static inline void spinlock_unlock_irqrestore(spinlock_t *lock, long flags) {
+    spinlock_unlock(lock);
+    enable_irqrestore(flags);
 }
 
 #endif

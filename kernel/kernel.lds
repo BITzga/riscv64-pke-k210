@@ -1,8 +1,11 @@
 /* See LICENSE for license details. */
 
-OUTPUT_ARCH( "riscv" )
+OUTPUT_ARCH(riscv)
 
-ENTRY( _mentry )
+ENTRY(_mentry)
+
+BASE_ADDRESS = 0x80020000;
+
 
 SECTIONS
 {
@@ -12,20 +15,21 @@ SECTIONS
   /*--------------------------------------------------------------------*/
 
   /* Begining of code and text segment, starts from DRAM_BASE to be effective before enabling paging */
-  . = 0x80000000;
-  _ftext = .;
+  . = BASE_ADDRESS;
+
 
   /* text: Program code section */
   .text : 
   {
-    *(.text)
-    *(.text.*)
-    *(.gnu.linkonce.t.*)
+    stext = .;
+    *(.text.prologue);
+    *(.text .stub .text.* .gnu.linkonce.t.*);
     . = ALIGN(0x1000);
 
     _trap_sec_start = .;
     *(trapsec)
     . = ALIGN(0x1000);
+    etext = .;
   /*   ASSERT(. - _trap_sec_start == 0x1000, "error: trap section larger than one page");   */
   }
 

@@ -3,10 +3,10 @@
 #include "riscv.h"
 
 // RISC-V machine places its physical memory above DRAM_BASE
-#define DRAM_BASE 0x80000000
+#define DRAM_BASE 0x80020000
 
 // the beginning virtual address of PKE kernel
-#define KERN_BASE 0x80000000
+#define KERN_BASE 0x80020000
 
 // default stack size
 #define STACK_SIZE 4096
