@@ -33,6 +33,7 @@ static void handle_syscall(trapframe *tf) {
 
 void handle_stimer_trap() {
     sprint("Ticks %d\n", ++g_ticks);
+    write_csr(sip, 0);
     clock_set_next_event();
     // TODO (lab1_3): increase g_ticks to record this "tick", and then clear the "SIP"
     // field in sip register.
@@ -69,7 +70,7 @@ void handle_user_page_fault(uint64 mcause, uint64 sepc, uint64 stval) {
 void smode_trap_handler(void) {
     // make sure we are in User mode before entering the trap handling.
     // we will consider other previous case in lab1_3 (interrupt).
-    if ((read_csr(sstatus) & SSTATUS_SPP) != 0) panic("usertrap: not from user mode");
+//    if ((read_csr(sstatus) & SSTATUS_SPP) != 0) panic("usertrap: not from user mode");
 
     assert(current);
     // save user process counter.

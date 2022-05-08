@@ -3,7 +3,7 @@
  */
 
 #include "user_lib.h"
-#include "util/types.h"
+#include "../util/types.h"
 
 //
 // compute the summation of an arithmetic sequence. for a given "n", compute
@@ -23,6 +23,6 @@ int main(void) {
   // we need a large enough "n" to trigger pagefaults in the user stack
   uint64 n = 1000;
 
-  printu("Summation of an arithmetic sequence from 0 to %ld is: %ld \n", n, sum_sequence(1000) );
+  printu("Summation of an arithmetic sequence from 0 to %ld is: %ld \n", n, sum_sequence(n) );
   exit(0);
 }
