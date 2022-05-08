@@ -66,6 +66,7 @@ void load_user_program(process *proc) {
     user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start, PGSIZE, (uint64) trap_sec_start,
                 prot_to_type(PROT_READ | PROT_EXEC, 0));
 }
+extern char _etext[];
 
 void load_user_program_on_k210(process *proc) {
 
@@ -88,6 +89,8 @@ void load_user_program_on_k210(process *proc) {
            proc->trapframe->regs.sp, proc->kstack);
     sprint("Application program entry point (virtual address): 0x%lx\n", proc->trapframe->epc);
 
+    user_vm_map((pagetable_t) proc->pagetable, USER_PROGRAM_ENTRY, (uint64)_etext - USER_PROGRAM_ENTRY , USER_PROGRAM_ENTRY,
+                prot_to_type(PROT_WRITE |PROT_EXEC| PROT_READ, 1));
     // map user stack in userspace
     user_vm_map((pagetable_t) proc->pagetable, USER_STACK_TOP - PGSIZE, PGSIZE, user_stack,
                 prot_to_type(PROT_WRITE | PROT_READ, 1));
@@ -98,7 +101,7 @@ void load_user_program_on_k210(process *proc) {
 
     // map S-mode trap vector section in user space (direct mapping as in kernel space)
     // we assume that the size of usertrap.S is smaller than a page.
-    user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start, PGSIZE, (uint64) trap_sec_start,
+    user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start + 2*PGSIZE, PGSIZE, (uint64) trap_sec_start,
                 prot_to_type(PROT_READ | PROT_EXEC, 0));
 }
 
