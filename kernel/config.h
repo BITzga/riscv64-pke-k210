@@ -1,25 +1,20 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
+#include "memlayout.h"
+
 // we use only one HART (cpu) in fundamental experiments
 #define NCPU 1
 
 //interval of timer interrupt
 #define TIMER_INTERVAL 1000000
 
-#define DRAM_BASE 0x80020000
+// the maximum memory space that PKE is allowed to manage
+#define PKE_MAX_ALLOWABLE_RAM 1 * 1024 * 1024
 
-/* we use fixed physical (also logical) addresses for the stacks and trap frames as in
- Bare memory-mapping mode */
-// user stack top
-#define USER_STACK 0x81100000
+// the ending physical address that PKE observes
+#define PHYS_TOP (DRAM_BASE + PKE_MAX_ALLOWABLE_RAM)
 
-// the stack used by PKE kernel when a syscall happens
-#define USER_KSTACK 0x81200000
-
-// the trap frame used to assemble the user "process"
-#define USER_TRAP_FRAME 0x81300000
-
-#define USER_PROGRAM_ENTRY 0x8002091a
+#define USER_PROGRAM_ENTRY 0x80020ec8
 
 #endif
