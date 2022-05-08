@@ -3,7 +3,7 @@
  */
 
 #include "user_lib.h"
-#include "util/types.h"
+#include "../util/types.h"
 
 struct my_structure {
   char c;
