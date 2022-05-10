@@ -34,16 +34,17 @@ void enable_paging() {
 // load the elf, and construct a "process" (with only a trapframe).
 // load_bincode_from_host_elf is defined in elf.c
 //
-process* load_user_program( ) {
-  process* proc;
+process *load_user_program() {
+    process *proc;
 
-  proc = alloc_process();
+    proc = alloc_process();
 
-  sprint("User application is loading.\n");
-  load_bincode_from_host_elf(proc);
+    sprint("User application is loading.\n");
+    load_bincode_from_host_elf(proc);
 
-  return proc;
+    return proc;
 }
+
 extern char _etext[];
 
 void load_user_program_on_k210(process *proc) {
@@ -67,8 +68,9 @@ void load_user_program_on_k210(process *proc) {
            proc->trapframe->regs.sp, proc->kstack);
     sprint("Application program entry point (virtual address): 0x%lx\n", proc->trapframe->epc);
 
-    user_vm_map((pagetable_t) proc->pagetable, USER_PROGRAM_ENTRY, (uint64)_etext - USER_PROGRAM_ENTRY , USER_PROGRAM_ENTRY,
-                prot_to_type(PROT_WRITE |PROT_EXEC| PROT_READ, 1));
+    user_vm_map((pagetable_t) proc->pagetable, USER_PROGRAM_ENTRY, (uint64) _etext - USER_PROGRAM_ENTRY,
+                USER_PROGRAM_ENTRY,
+                prot_to_type(PROT_WRITE | PROT_EXEC | PROT_READ, 1));
     // map user stack in userspace
     user_vm_map((pagetable_t) proc->pagetable, USER_STACK_TOP - PGSIZE, PGSIZE, user_stack,
                 prot_to_type(PROT_WRITE | PROT_READ, 1));
@@ -79,7 +81,7 @@ void load_user_program_on_k210(process *proc) {
 
     // map S-mode trap vector section in user space (direct mapping as in kernel space)
     // we assume that the size of usertrap.S is smaller than a page.
-    user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start + 2*PGSIZE, PGSIZE, (uint64) trap_sec_start,
+    user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start + 2 * PGSIZE, PGSIZE, (uint64) trap_sec_start,
                 prot_to_type(PROT_READ | PROT_EXEC, 0));
 }
 
@@ -102,12 +104,12 @@ int s_start(void) {
     enable_paging();
     sprint("kernel page table is on \n");
 
-  init_proc_pool();
+    init_proc_pool();
 
-  // the application code (elf) is first loaded into memory, and then put into execution
-  sprint("Switch to user mode...\n");
-  insert_to_ready_queue( load_user_program() );
-  schedule();
+    // the application code (elf) is first loaded into memory, and then put into execution
+    sprint("Switch to user mode...\n");
+    insert_to_ready_queue(load_user_program());
+    schedule();
 
     return 0;
 }
