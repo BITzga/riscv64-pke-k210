@@ -84,6 +84,9 @@ int s_start(void) {
     // but now switch to paging mode in lab2.
     write_csr(satp, 0);
 
+    // init clock
+    clock_init();
+
     // init phisical memory manager
     pmm_init();
 
