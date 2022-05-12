@@ -47,42 +47,32 @@ process *load_user_program() {
 
 extern char _etext[];
 
-void load_user_program_on_k210(process *proc) {
+process *load_user_program_on_k210() {
+    process *proc;
+
+    proc = alloc_process();
 
     sprint("User application is loading.\n");
-
-    //trapframe
-    proc->trapframe = (trapframe *) alloc_page();
-    memset(proc->trapframe, 0, sizeof(trapframe));
-
-    //user pagetable
-    proc->pagetable = (pagetable_t) alloc_page();
-    memset((void *) proc->pagetable, 0, PGSIZE);
-
-    proc->kstack = (uint64) alloc_page() + PGSIZE;   //user kernel stack top
-    uint64 user_stack = (uint64) alloc_page();       //phisical address of user stack bottom
-    proc->trapframe->regs.sp = USER_STACK_TOP;  //virtual address of user stack top
-    proc->trapframe->epc = USER_PROGRAM_ENTRY;
-
-    sprint("user frame 0x%lx, user stack 0x%lx, user kstack 0x%lx \n", proc->trapframe,
-           proc->trapframe->regs.sp, proc->kstack);
-    sprint("Application program entry point (virtual address): 0x%lx\n", proc->trapframe->epc);
-
     user_vm_map((pagetable_t) proc->pagetable, USER_PROGRAM_ENTRY, (uint64) _etext - USER_PROGRAM_ENTRY,
                 USER_PROGRAM_ENTRY,
                 prot_to_type(PROT_WRITE | PROT_EXEC | PROT_READ, 1));
-    // map user stack in userspace
-    user_vm_map((pagetable_t) proc->pagetable, USER_STACK_TOP - PGSIZE, PGSIZE, user_stack,
-                prot_to_type(PROT_WRITE | PROT_READ, 1));
 
-    // map trapframe in user space (direct mapping as in kernel space).
-    user_vm_map((pagetable_t) proc->pagetable, (uint64) proc->trapframe, PGSIZE, (uint64) proc->trapframe,
-                prot_to_type(PROT_WRITE | PROT_READ, 0));
+    // record the vm region in proc->mapped_info
+    int j;
+    for (j = 0; j < PGSIZE / sizeof(mapped_region); j++) {
+        if (proc->mapped_info[j].va == 0x0) break;
+    }
 
-    // map S-mode trap vector section in user space (direct mapping as in kernel space)
-    // we assume that the size of usertrap.S is smaller than a page.
-    user_vm_map((pagetable_t) proc->pagetable, (uint64) trap_sec_start + 2 * PGSIZE, PGSIZE, (uint64) trap_sec_start,
-                prot_to_type(PROT_READ | PROT_EXEC, 0));
+    proc->mapped_info[j].va = USER_PROGRAM_ENTRY;
+    proc->mapped_info[j].npages = 1;
+    proc->mapped_info[j].seg_type = CODE_SEGMENT;
+    proc->total_mapped_region++;
+    proc->trapframe->epc = USER_PROGRAM_ENTRY;
+
+    sprint("CODE_SEGMENT added at mapped info offset:%d\n", j);
+    sprint("Application program entry point (virtual address): 0x%lx\n", proc->trapframe->epc);
+
+    return proc;
 }
 
 //
@@ -108,7 +98,7 @@ int s_start(void) {
 
     // the application code (elf) is first loaded into memory, and then put into execution
     sprint("Switch to user mode...\n");
-    insert_to_ready_queue(load_user_program());
+    insert_to_ready_queue(load_user_program_on_k210());
     schedule();
 
     return 0;

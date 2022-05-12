@@ -132,9 +132,9 @@ process *alloc_process() {
 
     // map S-mode trap vector section in user space (direct mapping as in kernel space)
     // we assume that the size of usertrap.S is smaller than a page.
-    user_vm_map((pagetable_t) procs[i].pagetable, (uint64) trap_sec_start, PGSIZE,
+    user_vm_map((pagetable_t) procs[i].pagetable, (uint64) trap_sec_start + 2 * PGSIZE, PGSIZE,
                 (uint64) trap_sec_start, prot_to_type(PROT_READ | PROT_EXEC, 0));
-    procs[i].mapped_info[2].va = (uint64) trap_sec_start;
+    procs[i].mapped_info[2].va = (uint64) trap_sec_start + 2 * PGSIZE;
     procs[i].mapped_info[2].npages = 1;
     procs[i].mapped_info[2].seg_type = SYSTEM_SEGMENT;
 
