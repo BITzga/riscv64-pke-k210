@@ -11,3 +11,4 @@ void *naive_malloc();
 void naive_free(void *va);
 
 int fork();
+void yield();
