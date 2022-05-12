@@ -3,8 +3,8 @@
  * parent and child processes intermittently give up their processors.
  */
 
-#include "user/user_lib.h"
-#include "util/types.h"
+#include "../user/user_lib.h"
+#include "../util/types.h"
 
 int main(void) {
   uint64 pid = fork();
