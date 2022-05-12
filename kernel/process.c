@@ -64,7 +64,7 @@ void switch_to(process *proc) {
 
     // set S Exception Program Counter to the saved user pc.
     write_csr(sepc, proc->trapframe->epc);
-    //sprint("sepc %lx", read_csr(sepc));
+    sprint("sepc %lx", read_csr(sepc));
 
     //make user page table
     uint64 user_satp = MAKE_SATP(proc->pagetable);
@@ -166,9 +166,14 @@ int free_process(process *proc) {
 // segments (code, system) of the parent to child. the stack segment remains unchanged
 // for the child.
 //
+
+extern char _etext[];
+
 int do_fork(process *parent) {
     sprint("will fork a child from parent %d.\n", parent->pid);
     process *child = alloc_process();
+
+
 
     for (int i = 0; i < parent->total_mapped_region; i++) {
         // browse parent's vm space, and copy its trapframe and data segments,
@@ -176,6 +181,7 @@ int do_fork(process *parent) {
         switch (parent->mapped_info[i].seg_type) {
             case CONTEXT_SEGMENT:
                 *child->trapframe = *parent->trapframe;
+                sprint("fork: epc %lx",child->trapframe->epc);
                 break;
             case STACK_SEGMENT:
                 memcpy((void *) lookup_pa(child->pagetable, child->mapped_info[0].va),
@@ -195,8 +201,8 @@ int do_fork(process *parent) {
                 for (int j = 0; j < parent->mapped_info[i].npages; j++) {
                     uint64 addr = lookup_pa(parent->pagetable, parent->mapped_info[i].va + j * PGSIZE);
 
-                    map_pages(child->pagetable, parent->mapped_info[i].va + j * PGSIZE, PGSIZE,
-                              addr, prot_to_type(PROT_WRITE | PROT_READ | PROT_EXEC, 1));
+                    map_pages(child->pagetable, parent->mapped_info[i].va + j * PGSIZE, (uint64) _etext - USER_PROGRAM_ENTRY,
+                              USER_PROGRAM_ENTRY, prot_to_type(PROT_WRITE | PROT_READ | PROT_EXEC, 1));
 
                     sprint("do_fork map code segment at pa:%lx of parent to child at va:%lx.\n",
                            addr, parent->mapped_info[i].va + j * PGSIZE);
