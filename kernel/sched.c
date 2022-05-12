@@ -3,7 +3,7 @@
  */
 
 #include "sched.h"
-#include "spike_interface/spike_utils.h"
+#include "../spike_interface/spike_utils.h"
 
 process* ready_queue_head = NULL;
 
