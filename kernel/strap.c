@@ -73,12 +73,21 @@ void handle_user_page_fault(uint64 mcause, uint64 sepc, uint64 stval) {
 // implements round-robin scheduling
 //
 void rrsched() {
-  // TODO (lab3_3): implements round-robin scheduling.
-  // hint: increase the tick_count member of current process by one, if it is bigger than
-  // TIME_SLICE_LEN (means it has consumed its time slice), change its status into READY,
-  // place it in the rear of ready queue, and finally schedule next process to run.
-  panic( "You need to further implement the timer handling in lab3_3.\n" );
+    // TODO (lab3_3): implements round-robin scheduling.
+    // hint: increase the tick_count member of current process by one, if it is bigger than
+    // TIME_SLICE_LEN (means it has consumed its time slice), change its status into READY,
+    // place it in the rear of ready queue, and finally schedule next process to run.
+    // panic( "You need to further implement the timer handling in lab3_3.\n" );
 
+    assert(current);
+    if (current->tick_count < TIME_SLICE_LEN) {
+        current->tick_count++;
+    } else {
+        current->tick_count = 0;
+        current->status = READY;
+        insert_to_ready_queue(current);
+        schedule();
+    }
 }
 
 //
