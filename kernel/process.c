@@ -64,7 +64,6 @@ void switch_to(process *proc) {
 
     // set S Exception Program Counter to the saved user pc.
     write_csr(sepc, proc->trapframe->epc);
-    sprint("sepc %lx", read_csr(sepc));
 
     //make user page table
     uint64 user_satp = MAKE_SATP(proc->pagetable);
