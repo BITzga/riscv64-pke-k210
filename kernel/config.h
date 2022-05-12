@@ -15,6 +15,6 @@
 // the ending physical address that PKE observes
 #define PHYS_TOP (DRAM_BASE + PKE_MAX_ALLOWABLE_RAM)
 
-#define USER_PROGRAM_ENTRY 0x8002149e
+#define USER_PROGRAM_ENTRY 0x800215f2
 
 #endif
